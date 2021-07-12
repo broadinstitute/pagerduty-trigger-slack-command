@@ -3,6 +3,11 @@ import os
 import flask
 from slack.signature import SignatureVerifier
 
+# SLACK_SIGNING_SECRET: secret/suitable/terraform/pagerduty-trigger-slack-command/slack-token @ slack-signing-secret
+# We might not need the client secret?
+# SLACK_CLIENT_SECRET: secret/suitable/terraform/pagerduty-trigger-slack-command/slack-token @ slack-client-secret
+# PAGERDUTY_INTEGRATION_SECRET: secret/suitable/pagerduty/manually-triggered-terra-incident @ events-v2-integration-key
+
 
 def verify_signature(request: flask.Request) -> None:
     request.get_data()  # Decodes received requests into request.data
