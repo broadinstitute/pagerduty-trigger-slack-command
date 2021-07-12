@@ -1,5 +1,4 @@
-# https://cloud.google.com/functions/docs/writing/specifying-dependencies-python#pre-installed_packages
-# + pdpyras + slackclient
 Flask==2.0.1
 pdpyras==4.3.0
 slackclient==2.9.3
+google-cloud-secret-manager==2.5.0
