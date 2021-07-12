@@ -8,11 +8,18 @@ from slack.signature import SignatureVerifier
 
 PAGERDUTY_SOURCE = 'app.terra.bio'
 
-def verify_signature(request: flask.Request) -> None:
+secret_manager_client = secretmanager.SecretManagerServiceClient()
+
+
+def secret_from_manager(secret_id: str) -> str:
+    response = secret_manager_client.access_secret_version(request=AccessSecretVersionRequest(secret_id))
+    return response.payload.data.decode('UTF-8')
+
+
+def verify_signature(request: flask.Request) -> bool:
     request.get_data()  # Decodes received requests into request.data
-    verifier = SignatureVerifier(os.environ['SLACK_SIGNING_SECRET'])
-    if not verifier.is_valid_request(request.data, request.headers):
-        raise ValueError('Invalid request/credentials.')
+    verifier = SignatureVerifier(secret_from_manager(os.environ['SLACK_SIGNING_SECRET_ID']))
+    return verifier.is_valid_request(request.data, request.headers)
 
 
 def trigger_pagerduty(message, source):
@@ -35,7 +42,8 @@ def terra_is_broken(request: flask.Request):
     if request.method != 'POST':
         return 'Only POST requests are accepted', 405
 
-    verify_signature(request)
+    if not verify_signature(request):
+        return 'Could not verify request', 401
 
     # Like /terraisbroken <argument>
     command_argument = request.form['text']
