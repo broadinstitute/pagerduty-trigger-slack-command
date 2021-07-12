@@ -18,7 +18,7 @@ def verify_signature(request: flask.Request) -> None:
 
 
 def trigger_pagerduty(message, source):
-    session = pdpyras.EventsAPISession(os.environ('PAGERDUTY_INTEGRATION_SECRET'))
+    session = pdpyras.EventsAPISession(os.environ['PAGERDUTY_INTEGRATION_SECRET'])
     session.trigger(message, source)
     return "Page initiated." 
 
