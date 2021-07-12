@@ -1,13 +1,11 @@
 import os
 
 import flask
-from slack.signature import SignatureVerifier
 import pdpyras
+from google.cloud import secretmanager
+from google.cloud.secretmanager_v1 import AccessSecretVersionRequest
+from slack.signature import SignatureVerifier
 
-# SLACK_SIGNING_SECRET: secret/suitable/terraform/pagerduty-trigger-slack-command/slack-token @ slack-signing-secret
-# We might not need the client secret?
-# SLACK_CLIENT_SECRET: secret/suitable/terraform/pagerduty-trigger-slack-command/slack-token @ slack-client-secret
-# PAGERDUTY_INTEGRATION_SECRET: secret/suitable/pagerduty/manually-triggered-terra-incident @ events-v2-integration-key
 PAGERDUTY_SOURCE = 'app.terra.bio'
 
 def verify_signature(request: flask.Request) -> None:
@@ -18,9 +16,9 @@ def verify_signature(request: flask.Request) -> None:
 
 
 def trigger_pagerduty(message, source):
-    session = pdpyras.EventsAPISession(os.environ['PAGERDUTY_INTEGRATION_SECRET'])
+    session = pdpyras.EventsAPISession(secret_from_manager(os.environ['PAGERDUTY_INTEGRATION_SECRET_ID']))
     session.trigger(message, source)
-    return "Page initiated." 
+    return "Page initiated."
 
 
 def terra_is_broken(request: flask.Request):
