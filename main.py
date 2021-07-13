@@ -6,6 +6,8 @@ from google.cloud import secretmanager
 from google.cloud.secretmanager_v1 import AccessSecretVersionRequest
 from slack.signature import SignatureVerifier
 
+# This is the affected system which PagerDuty is reporting to be down
+# See https://pagerduty.github.io/pdpyras/#events-api-client
 PAGERDUTY_SOURCE = 'app.terra.bio'
 
 secret_manager_client = secretmanager.SecretManagerServiceClient()
