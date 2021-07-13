@@ -12,7 +12,7 @@ secret_manager_client = secretmanager.SecretManagerServiceClient()
 
 
 def secret_from_manager(secret_id: str) -> str:
-    response = secret_manager_client.access_secret_version(request=AccessSecretVersionRequest(secret_id))
+    response = secret_manager_client.access_secret_version(name=secret_id)
     return response.payload.data.decode('UTF-8')
 
 
