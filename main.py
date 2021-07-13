@@ -28,7 +28,7 @@ def trigger_pagerduty(message, source):
     return "Page initiated."
 
 
-def terra_is_broken(request: flask.Request):
+def terra_is_down(request: flask.Request):
     """HTTP Cloud Function.
     Args:
         request (flask.Request): The request object.
@@ -45,7 +45,7 @@ def terra_is_broken(request: flask.Request):
     if not verify_signature(request):
         return 'Could not verify request', 401
 
-    # Like /terraisbroken <argument>
+    # Like /terraisdown <argument>
     command_argument = request.form['text']
     page = trigger_pagerduty(command_argument, PAGERDUTY_SOURCE)
     return flask.escape(page)
