@@ -26,8 +26,11 @@ def verify_signature(request: flask.Request) -> bool:
 
 def trigger_pagerduty(message, source):
     session = pdpyras.EventsAPISession(secret_from_manager(os.environ['PAGERDUTY_INTEGRATION_SECRET_ID']))
-    session.trigger(message, source)
-    return "Page initiated."
+    incident_id = session.trigger(message, source)
+    if incident_id:
+        return f"The on-call engineer has been paged. Incident key is {incident_id}."
+    else:
+        return "There was an error paging the on-call engineer."
 
 
 def terra_is_down(request: flask.Request):
@@ -51,3 +54,4 @@ def terra_is_down(request: flask.Request):
     command_argument = request.form['text']
     page = trigger_pagerduty(command_argument, PAGERDUTY_SOURCE)
     return flask.escape(page)
+
