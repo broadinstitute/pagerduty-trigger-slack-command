@@ -50,4 +50,14 @@ def terra_is_down(request: flask.Request):
     # Like /terraisdown <argument>
     command_argument = request.form['text']
     page = trigger_pagerduty(command_argument, PAGERDUTY_SOURCE)
-    return flask.escape(page)
+    return {
+        "blocks": [
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": f"*bold* and _italic_ and {page} and <https://example.com|this part is a link>"
+                }
+            }
+        ]
+    }
